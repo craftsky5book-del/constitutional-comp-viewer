@@ -140,7 +140,7 @@ function renderAll(){
     const arts=ch.articles.filter(a=>filter==='all'||a.status===filter);
     if(!arts.length)return;
     h+=`<div class="chb" id="ch${ci}">
-      <div class="chh" onclick="toggleCh(${ci})">
+      <div class="chh" data-ci="${ci}">
         <span class="ch-label">${esc(ch.title)}</span>
         <span class="chtog" id="chtog${ci}">▾ 折りたたむ</span>
       </div>
@@ -149,7 +149,7 @@ function renderAll(){
       const id=`a${ci}_${ai}`;
       const body=view==='split'?splitView(art):diffView(art);
       h+=`<div class="card status-${art.status}" id="${id}">
-        <div class="cardh" onclick="tc('${id}')">
+        <div class="cardh" data-id="${id}">
           <div class="card-left">
             <span class="cardkey">${esc(art.key)}</span>
             <span class="cardbadge">${sLabel(art.status)}</span>
@@ -169,8 +169,8 @@ function renderSb(){
   let h='';
   CHAPTERS.forEach((ch,ci)=>{
     const s=ch.title.length>16?ch.title.slice(0,16)+'…':ch.title;
-    h+=`<div class="nch-label" id="ncht${ci}" onclick="toggleNch(${ci})">${esc(s)}<i class="arr">▾</i></div><div class="nvl" id="nvl${ci}">`;
-    ch.articles.forEach((art,ai)=>h+=`<div class="nvi" id="nv${ci}_${ai}" onclick="go(${ci},${ai})"><span class="dot ${art.status}"></span>${esc(art.key)}</div>`);
+    h+=`<div class="nch-label" id="ncht${ci}" data-ci="${ci}">${esc(s)}<i class="arr">▾</i></div><div class="nvl" id="nvl${ci}">`;
+    ch.articles.forEach((art,ai)=>h+=`<div class="nvi" id="nv${ci}_${ai}" data-ci="${ci}" data-ai="${ai}"><span class="dot ${art.status}"></span>${esc(art.key)}</div>`);
     h+='</div>';
   });
   document.getElementById('sbn').innerHTML=h;
@@ -196,11 +196,22 @@ function go(ci,ai){
   document.getElementById(`nv${ci}_${ai}`)?.classList.add('active');
 }
 
+document.getElementById('overlay').addEventListener('click',closeSb);
+document.getElementById('hambtn').addEventListener('click',toggleSb);
+document.getElementById('stop').addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 document.getElementById('vtog').addEventListener('click',e=>{const b=e.target.closest('.vb');if(b)setView(b.dataset.v);});
 document.getElementById('fb').addEventListener('click',e=>{const b=e.target.closest('.fbb');if(b)setFilter(b.dataset.f);});
 document.getElementById('thbtn').addEventListener('click',toggleTheme);
 document.getElementById('q').addEventListener('input',function(){const q=this.value.toLowerCase();document.querySelectorAll('.nvi').forEach(e=>e.style.display=e.textContent.toLowerCase().includes(q)?'':'none');});
 window.addEventListener('scroll',()=>document.getElementById('stop').classList.toggle('on',scrollY>400),{passive:true});
+document.getElementById('main').addEventListener('click',e=>{
+  const chh=e.target.closest('.chh');if(chh){toggleCh(+chh.dataset.ci);return;}
+  const cardh=e.target.closest('.cardh');if(cardh){tc(cardh.dataset.id);}
+});
+document.getElementById('sbn').addEventListener('click',e=>{
+  const label=e.target.closest('.nch-label');if(label){toggleNch(+label.dataset.ci);return;}
+  const nvi=e.target.closest('.nvi');if(nvi){go(+nvi.dataset.ci,+nvi.dataset.ai);}
+});
 
 const obs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{

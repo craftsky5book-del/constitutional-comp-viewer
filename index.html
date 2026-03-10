@@ -7,10 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="/favicon.png" type="image/png">
 <link rel="stylesheet" href="styles.css">
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self';
+           style-src 'self' https://fonts.googleapis.com;
+           font-src https://fonts.gstatic.com;
+           script-src 'self';
+           img-src 'self';">
 </head>
 <body>
 
-<div id="overlay" onclick="closeSb()"></div>
+<div id="overlay"></div>
 
 <nav id="sb">
   <div class="sbh">
@@ -37,7 +43,7 @@
 </nav>
 
 <div id="hd">
-  <button id="hambtn" onclick="toggleSb()" aria-label="メニュー">
+  <button id="hambtn" aria-label="メニュー">
     <span></span><span></span><span></span>
   </button>
   <div class="hd-text">
@@ -62,7 +68,7 @@
 </div>
 
 <div id="main"></div>
-<button id="stop" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+<button id="stop">↑</button>
 
 <script src="script.js"></script>
 </body>
